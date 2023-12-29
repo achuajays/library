@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Library Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 300px;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Add New Library Item</h1>
+
+<form id="addLibraryItemForm">
+    <label for="nameInput">Name:</label>
+    <input type="text" id="nameInput" name="name" required>
+    <label for="id">id</label>
+    <input type="text" id="id" name="id" required>
+
+    <label for="shelfNoInput">Shelf No:</label>
+    <input type="text" id="shelfNoInput" name="shelfNo" required>
+
+    <label for="authorInput">Author:</label>
+    <input type="text" id="authorInput" name="author" required>
+
+    <button type="button" onclick="addNewLibraryItem()">Add Item</button>
+</form>
+
+<script>
+    function addNewLibraryItem() {
+        const id = document.getElementById('id');
+        const nameInput = document.getElementById('nameInput');
+        const shelfNoInput = document.getElementById('shelfNoInput');
+        const authorInput = document.getElementById('authorInput');
+
+        
+        const id = id.value;
+        const newName = nameInput.value;
+        const newShelfNo = shelfNoInput.value;
+        const newAuthor = authorInput.value;
+
+        // Make a POST request to the API to add the new library item
+        fetch('http://127.0.0.1:9000/library', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'id':id,
+                "name": newName,
+                "shelf_no": newShelfNo,
+                "author": newAuthor
+            }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the response data as needed
+            console.log('New library item added:', data);
+        })
+        .catch(error => console.error('Error adding new library item:', error));
+    }
+</script>
+
+</body>
+</html>

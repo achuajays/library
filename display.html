@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #libraryDetails {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #libraryDetails th, #libraryDetails td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #libraryDetails th {
+            background-color: #f2f2f2;
+        }
+
+        .deleteButton {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<table id="libraryDetails">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Shelf No</th>
+            <th>Author</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="libraryBody">
+        <!-- Data will be dynamically added here -->
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchDataAndPopulateTable();
+    });
+
+    function fetchDataAndPopulateTable() {
+        fetch('http://127.0.0.1:9000/library')
+            .then(response => response.json())
+            .then(data => {
+                // Assuming the API response is an array of library items
+                data.forEach(item => {
+                    appendLibraryItem(item);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    function appendLibraryItem(item) {
+        var tableBody = document.getElementById('libraryBody');
+
+        var row = tableBody.insertRow();
+        var idCell = row.insertCell(0);
+        var nameCell = row.insertCell(1);
+        var shelfNoCell = row.insertCell(2);
+        var authorCell = row.insertCell(3);
+        var actionCell = row.insertCell(4);
+
+        idCell.textContent = item.id;
+        nameCell.textContent = item.name;
+        shelfNoCell.textContent = item.shelf_no;
+        authorCell.textContent = item.author;
+
+        // Add a delete button for each row
+        var deleteButton = document.createElement('button');
+        deleteButton.className = 'deleteButton';
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = function() {
+            deleteRowAndData(item.id);
+        };
+
+        actionCell.appendChild(deleteButton);
+    }
+
+    function deleteRowAndData(itemId) {
+        // Make API request to delete data
+        fetch(`http://127.0.0.1:9000/library/${itemId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                // If API request is successful, reload the screen
+                location.reload();
+            } else {
+                console.error('Error deleting data:', response.status);
+            }
+        })
+        .catch(error => console.error('Error deleting data:', error));
+    }
+</script>
+
+</body>
+</html>
